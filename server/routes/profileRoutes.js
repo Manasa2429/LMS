@@ -34,4 +34,35 @@ router.get("/personal-info/:userId", async (req, res) => {
   }
 });
 
+// Route to update personal information
+// Route to update personal information
+router.put('/update-personal-info/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const { fullName, email, phone, dob, gender, role } = req.body;
+
+  try {
+    // Find the user by ID
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).send("User not found.");
+    }
+
+    // Update the user's personal information
+    user.fullName = fullName || user.fullName;
+    user.email = email || user.email;
+    user.phone = phone || user.phone;
+    user.dob = dob ? new Date(dob) : user.dob; // Convert dob to Date object if it exists
+    user.gender = gender || user.gender;
+    user.role = role || user.role;
+
+    // Save the updated user
+    await user.save();
+    res.status(200).json(user); // Return the updated user object
+  } catch (error) {
+    console.error("Error updating personal info:", error);
+    res.status(500).send("Error updating personal info.");
+  }
+});
+
+
 module.exports = router;

@@ -6,7 +6,7 @@ const Dashboard = ({ role }) => {
     const navigate = useNavigate(); // React Router navigation
 
     const dashboardItems = [
-        { title: "📚 My Courses", desc: "View and manage your enrolled courses.", path: "/courses" },
+        { title: "📚 My Courses", desc: "View and manage your enrolled courses.", path: "/enrolled-courses/:userId" },
         { title: "📝 Assignments", desc: "Check and submit your assignments on time.", path: "/assessments" },
         { title: "📅 Upcoming Events", desc: "Stay updated with important dates and schedules.", path: "/calendar" },
         { title: "📊 Progress Report", desc: "Track your learning progress and performance.", path: "/analytics" },

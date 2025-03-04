@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import HomePage from "./pages/HomePage";
@@ -14,18 +14,42 @@ import Settings from "./pages/Settings";
 import Support from "./pages/Support";
 import LoginSignup from "./components/LoginSignup"; 
 import PersonalInfo from "./pages/personalInfo";
+import CreateCourse from "./pages/CreateCourse";
+import EditCourse from "./pages/EditCourse";
+import EnrolledCourses from "./pages/EnrolledCourses";
+
 import "./App.css";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [role, setRole] = useState("");
+
+  useEffect(() => {
+    const storedRole = localStorage.getItem("role");
+    const storedLoginStatus = localStorage.getItem("isLoggedIn");
+
+    if (storedLoginStatus === "true") {
+      setIsLoggedIn(true);
+      setRole(storedRole || "user"); // Default to "user"
+    }
+  }, []);
+
+  // ✅ Logout function
+  const handleLogout = () => {
+    const confirmLogout = window.confirm("Are you sure you want to logout?");
+    if (confirmLogout) {
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("role");
+      setIsLoggedIn(false);
+    }
+  };
+  
 
   return (
     <Router>
       <div className="flex h-screen">
         {/* Show Sidebar only if logged in */}
-        {isLoggedIn && (
-          <Sidebar />
-        )}
+        {isLoggedIn && <Sidebar role={role} onLogout={handleLogout} />}
         
         <div className="flex-1 p-4">
           <Routes>
@@ -47,9 +71,11 @@ function App() {
                 <Route path="/profile/personal-info" element={<PersonalInfo />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/support" element={<Support />} />
+                <Route path="/create-course" element={<CreateCourse role={role} />} />
+                <Route path="/edit-course/:id" element={<EditCourse />} />
+                <Route path="/enrolled-courses/:userId" element={<EnrolledCourses />} />
               </>
             ) : (
-              // Redirect to login if not authenticated
               <Route path="*" element={<Navigate to="/login" />} />
             )}
           </Routes>

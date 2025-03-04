@@ -1,25 +1,64 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import "../App.css";  // ✅ Use "../" to go up one level
+import { useNavigate, useLocation } from "react-router-dom";
+import "../App.css";  
 
-const Sidebar = ({ role }) => {
-  const navigate = useNavigate(); // React Router navigation
+const Sidebar = ({ role, onLogout }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Function to check if a link is active
+  const isActive = (path) => (location.pathname === path ? "active" : "");
 
   return (
     <nav className="col-md-3 col-lg-2 d-md-block sidebar">
       <div className="position-sticky">
         <h2 className="text-center py-3">🎓 LMS</h2>
         <ul className="nav flex-column">
-          <li className="nav-item"><button className="nav-link" onClick={() => navigate("/dashboard")}>📊 Dashboard</button></li>
-          <li className="nav-item"><button className="nav-link" onClick={() => navigate("/courses")}>📚 Courses</button></li>
-          <li className="nav-item"><button className="nav-link" onClick={() => navigate("/assessments")}>📝 Assessments</button></li>
-          <li className="nav-item"><button className="nav-link" onClick={() => navigate("/messages")}>💬 Messages</button></li>
-          <li className="nav-item"><button className="nav-link" onClick={() => navigate("/forum")}>💻 Discussion Forum</button></li>
-          <li className="nav-item"><button className="nav-link" onClick={() => navigate("/calendar")}>📅 Calendar</button></li>
-          {role === "admin" && <li className="nav-item"><button className="nav-link" onClick={() => navigate("/analytics")}>📈 Analytics</button></li>}
-          <li className="nav-item"><button className="nav-link" onClick={() => navigate("/profile")}>👤 Profile</button></li>
-          <li className="nav-item"><button className="nav-link" onClick={() => navigate("/settings")}>⚙️ Settings</button></li>
-          <li className="nav-item"><button className="nav-link" onClick={() => navigate("/support")}>❓ Help & Support</button></li>
+          <li className="nav-item">
+            <button className={`nav-link ${isActive("/dashboard")}`} onClick={() => navigate("/dashboard")}>📊 Dashboard</button>
+          </li>
+          <li className="nav-item">
+            <button className={`nav-link ${isActive("/courses")}`} onClick={() => navigate("/courses")}>📚 Courses</button>
+          </li>
+          <li className="nav-item">
+            <button className={`nav-link ${isActive("/assessments")}`} onClick={() => navigate("/assessments")}>📝 Assessments</button>
+          </li>
+          <li className="nav-item">
+            <button className={`nav-link ${isActive("/messages")}`} onClick={() => navigate("/messages")}>💬 Messages</button>
+          </li>
+          <li className="nav-item">
+            <button className={`nav-link ${isActive("/forum")}`} onClick={() => navigate("/forum")}>💻 Discussion Forum</button>
+          </li>
+          <li className="nav-item">
+            <button className={`nav-link ${isActive("/calendar")}`} onClick={() => navigate("/calendar")}>📅 Calendar</button>
+          </li>
+
+          {/* Admin-only options */}
+          {role?.toLowerCase() === "admin" && (
+            <>
+              <li className="nav-item">
+                <button className={`nav-link ${isActive("/analytics")}`} onClick={() => navigate("/analytics")}>📈 Analytics</button>
+              </li>
+              <li className="nav-item">
+                <button className={`nav-link ${isActive("/create-course")}`} onClick={() => navigate("/create-course")}>➕ Add Course</button>
+              </li>
+            </>
+          )}
+
+          <li className="nav-item">
+            <button className={`nav-link ${isActive("/profile")}`} onClick={() => navigate("/profile")}>👤 Profile</button>
+          </li>
+          <li className="nav-item">
+            <button className={`nav-link ${isActive("/settings")}`} onClick={() => navigate("/settings")}>⚙️ Settings</button>
+          </li>
+          <li className="nav-item">
+            <button className={`nav-link ${isActive("/support")}`} onClick={() => navigate("/support")}>❓ Help & Support</button>
+          </li>
+
+          {/* Logout Button */}
+          <li className="nav-item">
+            <button className="nav-link text-danger" onClick={onLogout}>🚪 Logout</button>
+          </li>
         </ul>
       </div>
     </nav>

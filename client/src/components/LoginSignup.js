@@ -50,8 +50,15 @@ function LoginSignup({ formType, setIsLoggedIn }) {
       console.log(`${formType === "login" ? "Logged in" : "Signed up"} successfully!`, data);
 
       if (formType === "login") {
-        localStorage.setItem("userId", data.user._id); // Store userId in localStorage
+        // Store userId (studentId) and role in localStorage
+        localStorage.setItem("userId", data.user._id); // Store userId (studentId)
+        localStorage.setItem("role", data.user.role); // Store user role
         setIsLoggedIn(true);
+      }
+
+      if (formType === "signup") {
+        // Store user role in localStorage after signup
+        localStorage.setItem("role", role);
       }
 
       navigate("/dashboard"); // Redirect after success
