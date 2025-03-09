@@ -32,7 +32,8 @@ const CreateAssessment = () => {
 
   const fetchAssessments = async (courseId) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/assessments/${courseId}`);
+      const response = await axios.get(`http://localhost:5000/api/assessments/course/${courseId}`)
+
       setAssessments(response.data);
     } catch (error) {
       console.error("Error fetching assessments:", error);
