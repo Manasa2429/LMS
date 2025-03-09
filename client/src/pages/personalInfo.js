@@ -55,18 +55,26 @@ const PersonalInfo = () => {
       alert("User ID is missing.");
       return;
     }
-
+  
+    // Prevent users from changing their role to admin
+    if (formData.role === "admin" && personalInfo.role !== "admin") {
+      setError("You cannot change your role to admin.");
+      return;
+    }
+  
     axios
       .put(`http://localhost:5000/api/profile/update-personal-info/${userId}`, formData)
       .then((response) => {
         setPersonalInfo(response.data);
         setIsEditing(false);
+        setError(""); // Clear error on success
       })
       .catch((error) => {
         console.error("Error updating personal info:", error);
         setError("An error occurred while updating your details.");
       });
   };
+  
 
   // **🎨 Enhanced Styling**
   const styles = {

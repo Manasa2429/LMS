@@ -13,11 +13,17 @@ function LoginSignup({ formType, setIsLoggedIn }) {
   const [gender, setGender] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate(); // React Router navigation
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(""); // Reset errors before making a request
 
+    if (formType === "signup" && role === "admin") {
+      setError("You cannot be an admin.");
+      return;
+    }
+    
     // Signup validation
     if (formType === "signup") {
       if (password !== confirmPassword) {
@@ -93,8 +99,8 @@ function LoginSignup({ formType, setIsLoggedIn }) {
               />
               <select value={role} onChange={(e) => setRole(e.target.value)} className="auth-input" required>
                 <option value="student">Student</option>
-                <option value="instructor">Instructor</option>
-                <option value="admin">Admin</option>
+                
+                <option value="admin" disabled>Admin</option>
               </select>
               <input
                 type="date"

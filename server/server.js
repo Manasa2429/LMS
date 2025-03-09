@@ -5,7 +5,9 @@ require("dotenv").config();
 const authRoutes = require("./routes/authRoutes");
 const profileRoutes = require("./routes/profileRoutes");
 const courseRoutes = require("./routes/courseRoutes");
-const enrollmentRoutes = require('./routes/enrollRoutes');  // Added enrollment routes
+const enrollmentRoutes = require("./routes/enrollRoutes");
+const assessmentRoutes = require("./routes/assessmentsRoutes");  // Added assessment routes
+const submissionRoutes = require("./routes/submissionsRoutes");  // Added submission routes
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -15,10 +17,12 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use("/auth", authRoutes);  // Base route for authentication
+app.use("/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/courses", courseRoutes);
-app.use(enrollmentRoutes);  // Added the enrollment routes
+app.use(enrollmentRoutes);
+app.use("/api/assessments", assessmentRoutes);  // Added route for assessments
+app.use("/api/submissions", submissionRoutes);  // Added route for submissions
 
 // Connect to MongoDB
 mongoose.connect(process.env.mongoURL, { useUnifiedTopology: true, useNewUrlParser: true });
@@ -26,11 +30,11 @@ mongoose.connect(process.env.mongoURL, { useUnifiedTopology: true, useNewUrlPars
 var connection = mongoose.connection;
 
 connection.on("error", () => {
-    console.log("Mongo DB Connection Failed");
+    console.log("MongoDB Connection Failed");
 });
 
 connection.on("connected", () => {
-    console.log("Mongo DB Connection Successful");
+    console.log("MongoDB Connection Successful");
 });
 
 // Start Server

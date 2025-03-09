@@ -17,6 +17,9 @@ import PersonalInfo from "./pages/personalInfo";
 import CreateCourse from "./pages/CreateCourse";
 import EditCourse from "./pages/EditCourse";
 import EnrolledCourses from "./pages/EnrolledCourses";
+import OngoingAssessments from "./pages/OngoingAssessments";
+import CreateAssessment from "./pages/CreateAssessment";
+import AttemptAssessment from "./pages/AttemptAssessment";
 
 import "./App.css";
 
@@ -63,6 +66,9 @@ function App() {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/courses" element={<Courses />} />
                 <Route path="/assessments" element={<Assessments />} />
+                <Route path="/assessments/ongoing" element={<OngoingAssessments />} />
+                <Route path="/attempt-assessment/:assessmentId" element={<AttemptAssessment />} />
+                <Route path="/assessments/create" element={<CreateAssessment />} />
                 <Route path="/messages" element={<Messages />} />
                 <Route path="/forum" element={<DiscussionForum />} />
                 <Route path="/calendar" element={<Calendar />} />
