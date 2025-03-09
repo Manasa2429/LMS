@@ -32,13 +32,31 @@ const CreateAssessment = () => {
 
   const fetchAssessments = async (courseId) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/assessments/${courseId}`);
+      const response = await axios.get(`http://localhost:5000/api/assessments/course/${courseId}`);
       setAssessments(response.data);
     } catch (error) {
       console.error("Error fetching assessments:", error);
       setAssessments([]); // Reset if no assessments are found
     }
   };
+  // ✅ Function to handle changes in question fields
+  const handleQuestionChange = (qIndex, field, value) => {
+    setQuestions((prevQuestions) => {
+      const updatedQuestions = [...prevQuestions];
+      updatedQuestions[qIndex] = { ...updatedQuestions[qIndex], [field]: value };
+      return updatedQuestions;
+    });
+  };
+
+  // ✅ Function to handle changes in answer options
+  const handleOptionChange = (qIndex, optIndex, value) => {
+    setQuestions((prevQuestions) => {
+      const updatedQuestions = [...prevQuestions];
+      updatedQuestions[qIndex].options[optIndex] = value;
+      return updatedQuestions;
+    });
+  };
+
 
   const handleDeleteAssessment = async (assessmentId) => {
     if (!assessmentId) {
