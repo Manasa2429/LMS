@@ -166,4 +166,27 @@ router.get("/:assessmentId", async (req, res) => {
   }
 });
 
+
+router.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, dueDate, questions } = req.body;
+    
+    const updatedAssessment = await Assessment.findByIdAndUpdate(
+      id,
+      { title, description, dueDate, questions },
+      { new: true }
+    );
+
+    if (!updatedAssessment) {
+      return res.status(404).json({ error: "Assessment not found." });
+    }
+
+    res.json({ message: "Assessment updated successfully", assessment: updatedAssessment });
+  } catch (error) {
+    console.error("Error updating assessment:", error);
+    res.status(500).json({ error: "Internal server error. Please try again." });
+  }
+});
+
 module.exports = router;

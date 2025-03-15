@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 
 const CreateAssessment = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const navigate = useNavigate();
   const [dueDate, setDueDate] = useState("");
   const [courses, setCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState("");
@@ -57,6 +60,9 @@ const CreateAssessment = () => {
     });
   };
 
+  const handleEditAssessment = (assessmentId) => {
+    navigate(`/assessments/edit/${assessmentId}`);
+  };
 
   const handleDeleteAssessment = async (assessmentId) => {
     if (!assessmentId) {
@@ -145,6 +151,7 @@ const CreateAssessment = () => {
               {assessments.map((assessment) => (
                 <li key={assessment._id} style={styles.assessmentItem}>
                   <strong>{assessment.title}</strong> - {assessment.description} (Due: {assessment.dueDate})
+                  <button onClick={() => handleEditAssessment(assessment._id)} style={styles.editButton}>✏️ Edit</button>
                   <button onClick={() => handleDeleteAssessment(assessment._id)} style={styles.deleteButton}>🗑️ Delete</button>
                 </li>
               ))}
@@ -339,6 +346,18 @@ const styles = {
     color: "white",
     cursor: "pointer",
     marginTop: "10px",
+   
+    marginLeft: "10px",
+  },
+  editButton: {
+    padding: "8px",
+    border: "none",
+    borderRadius: "8px",
+    background: "#ffc107", 
+    color: "white",
+    cursor: "pointer",
+    marginTop: "10px",
+    marginLeft: "10px",
   },
   
 };

@@ -7,7 +7,6 @@ const User = require("../models/User");
 router.get("/personal-info/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
-
     // ✅ Ensure `userId` is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ message: "Invalid User ID format" });
