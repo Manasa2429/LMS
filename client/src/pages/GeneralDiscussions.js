@@ -57,19 +57,34 @@ const GeneralDiscussions = () => {
     const handleLike = async (discussionId) => {
         try {
             const userId = localStorage.getItem("userId");
-            console.log("Sending like request:", { user: userId, targetId: discussionId, targetType: "Discussion" });
     
-            await axios.post("http://localhost:5000/api/likes", { 
+            const res = await axios.post("http://localhost:5000/api/likes", { 
                 user: userId, 
                 targetId: discussionId, 
                 targetType: "Discussion" 
             });
     
-            fetchDiscussions();
+            setDiscussions((prevDiscussions) =>
+                prevDiscussions.map((discussion) =>
+                    discussion._id === discussionId 
+                        ? { ...discussion, likes: [...discussion.likes, userId] } // Add the user to the likes array
+                        : discussion
+                )
+            );
+    
         } catch (error) {
             console.error("Error liking discussion:", error.response?.data || error);
+    
+            // Handle "Already liked" case without modifying the state
+            if (error.response?.data?.message === "Already liked") {
+                console.log("User already liked this discussion.");
+            }
         }
     };
+    
+    
+    
+    
     
 
     return (
@@ -114,7 +129,13 @@ const GeneralDiscussions = () => {
                                     onChange={(e) => setNewReply(e.target.value)}
                                     style={styles.textarea}
                                 />
-                                <button onClick={() => handleReply(discussion._id)} style={styles.button}>Reply</button>
+                                <button onClick={() => handleReply(discussion._id)} style={styles.replyButton}>
+    ➤ Submit Reply
+</button>
+
+
+
+
                             </div>
                         )}
                     </div>
