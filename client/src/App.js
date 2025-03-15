@@ -20,6 +20,8 @@ import EnrolledCourses from "./pages/EnrolledCourses";
 import OngoingAssessments from "./pages/OngoingAssessments";
 import CreateAssessment from "./pages/CreateAssessment";
 import AttemptAssessment from "./pages/AttemptAssessment";
+import EditAssessment from "./pages/EditAssessment";
+import GeneralDiscussions from "./pages/GeneralDiscussions";
 
 import "./App.css";
 
@@ -71,8 +73,10 @@ function App() {
                 <Route path="/assessments/ongoing" element={<OngoingAssessments />} />
                 <Route path="/attempt-assessment/:assessmentId" element={<AttemptAssessment />} />
                 <Route path="/assessments/create" element={<CreateAssessment />} />
+                <Route path="/assessments/edit/:assessmentId" element={<EditAssessment />} />
                 <Route path="/messages" element={<Messages />} />
                 <Route path="/forum" element={<DiscussionForum />} />
+                <Route path="/forum/general" element={<GeneralDiscussions />} />
                 <Route path="/calendar" element={<Calendar />} />
                 <Route path="/analytics" element={<Analytics />} />
                 <Route path="/profile" element={<Profile />} />
