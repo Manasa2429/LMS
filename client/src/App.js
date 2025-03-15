@@ -26,6 +26,8 @@ import "./App.css";
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [role, setRole] = useState("");
+  
+
 
   useEffect(() => {
     const storedRole = localStorage.getItem("role");
