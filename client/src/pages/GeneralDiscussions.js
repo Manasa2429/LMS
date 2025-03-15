@@ -21,20 +21,32 @@ const GeneralDiscussions = () => {
     };
 
     const handleCreateDiscussion = async () => {
-        if (!newDiscussion.title || !newDiscussion.content) return alert("Please enter all fields");
+        if (!newDiscussion.title || !newDiscussion.content) {
+            return alert("Please enter all fields");
+        }
+    
         try {
-            await axios.post("http://localhost:5000/api/discussions", { ...newDiscussion, author: "User123" });
-            setNewDiscussion({ title: "", content: "" });
+            const userId = localStorage.getItem("userId");
+    
+            await axios.post("http://localhost:5000/api/discussions", {
+                title: newDiscussion.title,
+                content: newDiscussion.content,
+                author: userId,
+                category: "General Discussions",  // Explicitly setting category
+            });
+    
+            setNewDiscussion({ title: "", content: "", category: "General Discussions" });  // Reset state properly
             fetchDiscussions();
         } catch (error) {
-            console.error("Error creating discussion:", error);
+            console.error("Error creating discussion:", error.response?.data || error);
         }
     };
-
+    
+    
     const handleReply = async (discussionId) => {
         if (!newReply) return alert("Enter a reply");
         try {
-            await axios.post("http://localhost:5000/api/replies", { content: newReply, author: "User123", discussion: discussionId });
+            await axios.post("http://localhost:5000/api/replies", { content: newReply, author: localStorage.getItem("userId"), discussion: discussionId });
             setNewReply("");
             fetchDiscussions();
         } catch (error) {
@@ -44,18 +56,26 @@ const GeneralDiscussions = () => {
 
     const handleLike = async (discussionId) => {
         try {
-            await axios.post("http://localhost:5000/api/likes", { user: "User123", targetId: discussionId, targetType: "discussion" });
+            const userId = localStorage.getItem("userId");
+            console.log("Sending like request:", { user: userId, targetId: discussionId, targetType: "Discussion" });
+    
+            await axios.post("http://localhost:5000/api/likes", { 
+                user: userId, 
+                targetId: discussionId, 
+                targetType: "Discussion" 
+            });
+    
             fetchDiscussions();
         } catch (error) {
-            console.error("Error liking discussion:", error);
+            console.error("Error liking discussion:", error.response?.data || error);
         }
     };
+    
 
     return (
         <div style={styles.container}>
             <h1 style={styles.title}>💬 General Discussions</h1>
 
-            {/* Create New Discussion */}
             <div style={styles.form}>
                 <input
                     type="text"
@@ -73,8 +93,7 @@ const GeneralDiscussions = () => {
                 <button onClick={handleCreateDiscussion} style={styles.button}>Start Discussion</button>
             </div>
 
-            {/* Display Discussions */}
-            <div>
+            <div style={styles.discussionsList}>
                 {discussions.map((discussion) => (
                     <div key={discussion._id} style={styles.discussionCard}>
                         <h3>{discussion.title}</h3>
@@ -84,7 +103,6 @@ const GeneralDiscussions = () => {
                             <button onClick={() => setSelectedDiscussion(discussion._id)} style={styles.replyButton}>💬 Reply</button>
                         </div>
 
-                        {/* Replies Section */}
                         {selectedDiscussion === discussion._id && (
                             <div style={styles.replySection}>
                                 {discussion.replies?.map((reply, index) => (
@@ -106,20 +124,84 @@ const GeneralDiscussions = () => {
     );
 };
 
-// Inline CSS Styles
 const styles = {
-    container: { width: "60%", margin: "auto", padding: "20px", fontFamily: "Arial" },
-    title: { textAlign: "center", color: "#333" },
-    form: { display: "flex", flexDirection: "column", gap: "10px", marginBottom: "20px" },
-    input: { padding: "10px", fontSize: "16px", borderRadius: "5px", border: "1px solid #ccc" },
-    textarea: { padding: "10px", fontSize: "16px", borderRadius: "5px", border: "1px solid #ccc", minHeight: "80px" },
-    button: { padding: "10px", fontSize: "16px", background: "#007bff", color: "#fff", border: "none", borderRadius: "5px", cursor: "pointer" },
-    discussionCard: { background: "#f9f9f9", padding: "15px", borderRadius: "8px", marginBottom: "10px", boxShadow: "2px 2px 10px rgba(0,0,0,0.1)" },
-    actions: { display: "flex", gap: "10px", marginTop: "10px" },
-    likeButton: { background: "none", border: "none", color: "#007bff", fontSize: "16px", cursor: "pointer" },
-    replyButton: { background: "none", border: "none", color: "#007bff", fontSize: "16px", cursor: "pointer" },
-    replySection: { marginTop: "10px", paddingLeft: "10px", borderLeft: "3px solid #ccc" },
-    reply: { padding: "5px", background: "#fff", borderRadius: "5px", marginBottom: "5px" }
+    container: {
+        marginLeft:"250px",
+        padding: "30px",
+        minHeight: "100vh",
+        backgroundColor: "#f8f9fa",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+    },
+    title: {
+        fontSize: "24px",
+        fontWeight: "bold",
+        color: "#003c8f",
+    },
+    form: {
+        background: "#ffffff",
+        padding: "20px",
+        borderRadius: "12px",
+        boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.15)",
+        width: "90%",
+        maxWidth: "600px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
+    },
+    input: {
+        width: "100%",
+        padding: "10px",
+        border: "1px solid #ccc",
+        borderRadius: "8px",
+        fontSize: "16px",
+    },
+    textarea: {
+        width: "100%",
+        padding: "10px",
+        border: "1px solid #ccc",
+        borderRadius: "8px",
+        fontSize: "16px",
+    },
+    button: {
+        padding: "10px",
+        border: "none",
+        borderRadius: "8px",
+        background: "#003c8f",
+        color: "white",
+        cursor: "pointer",
+        fontSize: "16px",
+    },
+    discussionsList: {
+        width: "90%",
+        maxWidth: "600px",
+        marginTop: "20px",
+    },
+    discussionCard: {
+        background: "#ffffff",
+        padding: "20px",
+        borderRadius: "12px",
+        boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.15)",
+        marginBottom: "15px",
+    },
+    actions: {
+        display: "flex",
+        gap: "10px",
+        marginTop: "10px",
+    },
+    likeButton: {
+        padding: "6px 10px",
+        borderRadius: "8px",
+        background: "#28a745",
+        color: "white",
+    },
+    replyButton: {
+        padding: "6px 10px",
+        borderRadius: "8px",
+        background: "#003c8f",
+        color: "white",
+    },
 };
 
 export default GeneralDiscussions;
