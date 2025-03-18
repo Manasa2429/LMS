@@ -16,15 +16,28 @@ router.get("/", async (req, res) => {
 
 // Create a new discussion
 router.post("/", async (req, res) => {
-  try {
-    const { title, content, author } = req.body;
-    const discussion = new Discussion({ title, content, author });
-    await discussion.save();
-    res.status(201).json({ message: "Discussion created", discussion });
-  } catch (error) {
-    res.status(500).json({ message: "Error creating discussion", error });
-  }
+    try {
+        const { title, content, author, category } = req.body;
+
+        if (!title || !content || !author) {
+            return res.status(400).json({ error: "All fields are required" });
+        }
+
+        const newDiscussion = new Discussion({
+            title,
+            content,
+            author,
+            category: category || "General Discussions", // Default category
+        });
+
+        await newDiscussion.save();
+        res.status(201).json(newDiscussion);
+    } catch (error) {
+        console.error("Error creating discussion:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
 });
+
 
 // Get a single discussion with replies
 router.get("/:id", async (req, res) => {
