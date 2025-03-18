@@ -71,7 +71,7 @@ function App() {
                 <Route path="/assessments/ongoing" element={<OngoingAssessments />} />
                 <Route path="/attempt-assessment/:assessmentId" element={<AttemptAssessment />} />
                 <Route path="/assessments/create" element={<CreateAssessment />} />
-                <Route path="/assessments/edit/:id" element={<EditAssessment />} />
+                <Route path="/assessments/edit/:assessmentId" element={<EditAssessment />} />
                 <Route path="/messages" element={<Messages />} />
                 <Route path="/forum" element={<DiscussionForum />} />
                 <Route path="/forum/general" element={<GeneralDiscussions />} />

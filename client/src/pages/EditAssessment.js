@@ -15,8 +15,9 @@ const EditAssessment = () => {
     const fetchAssessment = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/api/assessments/${assessmentId}`);
+
         const { title, description, dueDate, questions } = response.data;
-        
+
         setTitle(title || "");
         setDescription(description || "");
         setDueDate(dueDate ? new Date(dueDate).toISOString().split("T")[0] : "");
@@ -56,10 +57,11 @@ const EditAssessment = () => {
     e.preventDefault();
     try {
       await axios.put(
-        `http://localhost:5000/api/assessments/${assessmentId}`,
+        `http://localhost:5000/api/assessments/${assessmentId}`, // ✅ Ensure assessmentId is defined
         { title, description, dueDate, questions },
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+        { headers: { Authorization: 'Bearer ${localStorage.getItem("token")}' } }
       );
+      
       alert("✅ Assessment Updated Successfully!");
       navigate("/assessments");
     } catch (error) {
@@ -117,5 +119,6 @@ const styles = {
   submitButton: { padding: "10px", border: "none", borderRadius: "8px", background: "#003c8f", color: "white", cursor: "pointer", marginTop: "10px", marginLeft: "10px" },
   cancelButton: { padding: "10px", border: "none", borderRadius: "8px", background: "#dc3545", color: "white", cursor: "pointer", marginTop: "10px", marginLeft: "10px" },
 };
+
 
 export default EditAssessment;

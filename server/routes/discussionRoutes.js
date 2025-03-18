@@ -7,9 +7,19 @@ const Like = require("../models/Like");
 // Get all discussions
 router.get("/", async (req, res) => {
   try {
-    const discussions = await Discussion.find().populate("author", "fullName");
+    console.log("Fetching discussions...");
+
+    const discussions = await Discussion.find()
+      .populate("author", "fullName")
+      .populate({
+        path: "replies",
+        populate: { path: "author", select: "fullName" },
+      });
+
+    console.log("Discussions fetched:", discussions);
     res.status(200).json(discussions);
   } catch (error) {
+    console.error("Error fetching discussions:", error);
     res.status(500).json({ message: "Error fetching discussions", error });
   }
 });

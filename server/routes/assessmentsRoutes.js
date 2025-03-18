@@ -170,6 +170,13 @@ router.get("/:assessmentId", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
+    console.log("Received ID:", id); // ✅ Debugging log
+    console.log("Received body:", req.body); // ✅ Debugging log
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "Invalid ID format." });
+    }
+
     const { title, description, dueDate, questions } = req.body;
     
     const updatedAssessment = await Assessment.findByIdAndUpdate(
@@ -188,5 +195,7 @@ router.put("/:id", async (req, res) => {
     res.status(500).json({ error: "Internal server error. Please try again." });
   }
 });
+
+
 
 module.exports = router;

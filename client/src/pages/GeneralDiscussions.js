@@ -41,18 +41,71 @@ const GeneralDiscussions = () => {
             console.error("Error creating discussion:", error.response?.data || error);
         }
     };
+
+    const handleDeleteDiscussion = async (discussionId) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this discussion?");
+        if (!confirmDelete) return;
+    
+        try {
+            await axios.delete(`http://localhost:5000/api/discussions/${discussionId}`);
+            setDiscussions(discussions.filter(d => d._id !== discussionId));
+        } catch (error) {
+            console.error("Error deleting discussion:", error);
+        }
+    };
+    
     
     
     const handleReply = async (discussionId) => {
         if (!newReply) return alert("Enter a reply");
         try {
-            await axios.post("http://localhost:5000/api/replies", { content: newReply, author: localStorage.getItem("userId"), discussion: discussionId });
+            const userId = localStorage.getItem("userId");
+
+            await axios.post("http://localhost:5000/api/replies", {
+                content: newReply,
+                author: userId,
+                discussion: discussionId
+            });
+
             setNewReply("");
             fetchDiscussions();
         } catch (error) {
             console.error("Error adding reply:", error);
         }
     };
+
+    const handleDeleteReply = async (replyId, discussionId) => {
+        try {
+            await axios.delete(`http://localhost:5000/api/replies/${replyId}`);
+            setDiscussions(discussions.map(discussion => {
+                if (discussion._id === discussionId) {
+                    return {
+                        ...discussion,
+                        replies: discussion.replies.filter(reply => reply._id !== replyId)
+                    };
+                }
+                return discussion;
+            }));
+        } catch (error) {
+            console.error("Error deleting reply:", error);
+        }
+    };
+
+    const handleReplyClick = async (discussionId) => {
+        setSelectedDiscussion(discussionId);
+        
+        try {
+            const res = await axios.get(`http://localhost:5000/api/discussions/${discussionId}`);
+            const updatedDiscussion = res.data;
+            
+            setDiscussions((prev) => 
+                prev.map((d) => d._id === discussionId ? updatedDiscussion : d)
+            );
+        } catch (error) {
+            console.error("Error fetching discussion with replies:", error);
+        }
+    };
+    
 
     const handleLike = async (discussionId) => {
         try {
@@ -77,7 +130,7 @@ const GeneralDiscussions = () => {
     
             // Handle "Already liked" case without modifying the state
             if (error.response?.data?.message === "Already liked") {
-                console.log("User already liked this discussion.");
+                alert("User already liked this discussion.");
             }
         }
     };
@@ -111,18 +164,46 @@ const GeneralDiscussions = () => {
             <div style={styles.discussionsList}>
                 {discussions.map((discussion) => (
                     <div key={discussion._id} style={styles.discussionCard}>
-                        <h3>{discussion.title}</h3>
+                        <div style={styles.header}>
+                            <h3>{discussion.title}</h3>
+                            <span style={styles.deleteIcon} onClick={() => handleDeleteDiscussion(discussion._id)}>🗑️</span>
+                        </div>
                         <p>{discussion.content}</p>
+                        <p><strong>Author:</strong> {discussion.author?.fullName || "Unknown"}</p>
                         <div style={styles.actions}>
                             <button onClick={() => handleLike(discussion._id)} style={styles.likeButton}>👍 {discussion.likes?.length || 0}</button>
-                            <button onClick={() => setSelectedDiscussion(discussion._id)} style={styles.replyButton}>💬 Reply</button>
-                        </div>
+                            {/* Hide reply button when a reply input box is active */}
+                            {selectedDiscussion === discussion._id ? (
+    <button onClick={() => setSelectedDiscussion(null)} style={styles.cancelReplyButton}>
+        ❌ Cancel Reply
+    </button>
+) : (
+    <button onClick={() => setSelectedDiscussion(discussion._id)} style={styles.replyButton}>
+        💬 Reply
+    </button>
+)}
+</div>
+
+                        {/* Show all replies under each discussion */}
+<div style={styles.replySection}>
+    {discussion.replies?.map((reply) => (
+        <div key={reply._id} style={styles.replyContainer}>
+            <p style={styles.reply}>
+                <strong>{reply.author?.fullName || "Anonymous"}:</strong> {reply.content}
+            </p>
+            {/* Delete button for replies */}
+            <button 
+                onClick={() => handleDeleteReply(reply._id, discussion._id)} 
+                style={styles.deleteReplyButton}
+            >
+                🗑️ Delete
+            </button>
+        </div>
+    ))}
+</div>
 
                         {selectedDiscussion === discussion._id && (
-                            <div style={styles.replySection}>
-                                {discussion.replies?.map((reply, index) => (
-                                    <p key={index} style={styles.reply}>{reply.content}</p>
-                                ))}
+                            <div style={styles.replyInputSection}>
                                 <textarea
                                     placeholder="Write a reply..."
                                     value={newReply}
@@ -130,12 +211,8 @@ const GeneralDiscussions = () => {
                                     style={styles.textarea}
                                 />
                                 <button onClick={() => handleReply(discussion._id)} style={styles.replyButton}>
-    ➤ Submit Reply
-</button>
-
-
-
-
+                                    ➤ Submit Reply
+                                </button>
                             </div>
                         )}
                     </div>
@@ -147,8 +224,9 @@ const GeneralDiscussions = () => {
 
 const styles = {
     container: {
-        marginLeft:"250px",
+        marginLeft: "250px",
         padding: "30px",
+        width: "100%",
         minHeight: "100vh",
         backgroundColor: "#f8f9fa",
         display: "flex",
@@ -156,6 +234,8 @@ const styles = {
         alignItems: "center",
     },
     title: {
+        alignSelf: "flex-start", // Aligns title to the left
+        marginLeft: "50px", // Adjust spacing from the left
         fontSize: "24px",
         fontWeight: "bold",
         color: "#003c8f",
@@ -222,6 +302,34 @@ const styles = {
         borderRadius: "8px",
         background: "#003c8f",
         color: "white",
+    },
+    header: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+    deleteIcon: {
+        cursor: "pointer",
+        fontSize: "18px",
+        color: "red",
+    },
+    replyContainer: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        background: "#f1f1f1",
+        padding: "10px",
+        borderRadius: "8px",
+        marginBottom: "5px",
+    },
+    deleteReplyButton: {
+        background: "red",
+        color: "white",
+        border: "none",
+        padding: "5px 10px",
+        borderRadius: "8px",
+        cursor: "pointer",
+        fontSize: "14px",
     },
 };
 

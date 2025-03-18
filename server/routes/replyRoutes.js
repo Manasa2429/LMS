@@ -1,16 +1,20 @@
 const express = require("express");
 const router = express.Router();
 const Reply = require("../models/Reply");
+const Discussion = require("../models/Discussion");
 
 // Add a reply to a discussion
 router.post("/", async (req, res) => {
   try {
-    const { content, author, discussion } = req.body;
-    const reply = new Reply({ content, author, discussion });
-    await reply.save();
-    res.status(201).json({ message: "Reply added", reply });
+      const { content, author, discussion } = req.body;
+      const reply = new Reply({ content, author, discussion });
+      await reply.save();
+
+      await Discussion.findByIdAndUpdate(discussion, { $push: { replies: reply._id } });
+
+      res.status(201).json({ message: "Reply added", reply });
   } catch (error) {
-    res.status(500).json({ message: "Error adding reply", error });
+      res.status(500).json({ message: "Error adding reply", error });
   }
 });
 
