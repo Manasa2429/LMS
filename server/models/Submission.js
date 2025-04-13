@@ -10,7 +10,8 @@ const SubmissionSchema = new mongoose.Schema({
       selectedAnswer: { type: String, required: true }
     }
   ],
-  submittedAt: { type: Date, default: Date.now },
+  attemptedAt: { type: Date, default: Date.now },
+
   score: { type: Number, default: null }, // Null until graded
   feedback: { type: String, default: "" }
 });

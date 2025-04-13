@@ -11,6 +11,8 @@ const submissionRoutes = require("./routes/submissionsRoutes");  // Added submis
 const discussionRoutes = require("./routes/discussionRoutes");
 const replyRoutes = require("./routes/replyRoutes");
 const likeRoutes = require("./routes/likeRoutes");
+const announcementsRoutes=require("./routes/announcementsRoutes");
+const forumRoutes=require("./routes/forumRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -29,6 +31,8 @@ app.use("/api/submissions", submissionRoutes);  // Added route for submissions
 app.use("/api/discussions", discussionRoutes);
 app.use("/api/replies", replyRoutes);
 app.use("/api/likes", likeRoutes);
+app.use("/api/announcements",announcementsRoutes);
+app.use("/api/forums",forumRoutes);
 
 // Connect to MongoDB
 mongoose.connect(process.env.mongoURL, { useUnifiedTopology: true, useNewUrlParser: true });

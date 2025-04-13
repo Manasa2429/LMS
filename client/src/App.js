@@ -22,12 +22,21 @@ import CreateAssessment from "./pages/CreateAssessment";
 import AttemptAssessment from "./pages/AttemptAssessment";
 import EditAssessment from "./pages/EditAssessment";
 import GeneralDiscussions from "./pages/GeneralDiscussions";
+import Announcements from "./pages/Announcements";
+import ForumPage from "./pages/ForumPage";
+import CompletedAssessments from "./pages/CompletedAssessments";
+import ProgressReport from "./pages/ProgressReport";
+
+
+
 
 import "./App.css";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [role, setRole] = useState("");
+  
+
 
   useEffect(() => {
     const storedRole = localStorage.getItem("role");
@@ -84,6 +93,11 @@ function App() {
                 <Route path="/create-course" element={<CreateCourse role={role} />} />
                 <Route path="/edit-course/:id" element={<EditCourse />} />
                 <Route path="/enrolled-courses/:userId" element={<EnrolledCourses />} />
+                <Route path="/forum/announcements" element={<Announcements />} />
+                <Route path="/forum/courses" element={<ForumPage  />} />
+                <Route path="/assessments/completed" element={<CompletedAssessments />} />
+<Route path="/assessments/analytics" element={<ProgressReport />} />
+
               </>
             ) : (
               <Route path="*" element={<Navigate to="/login" />} />

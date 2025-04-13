@@ -8,7 +8,7 @@ const DiscussionForum = ({ role }) => {
     const forumItems = [
         { title: "💬 General Discussions", desc: "Engage in open discussions with peers.", path: "/forum/general" },
         { title: "📚 Course Forums", desc: "Discuss topics related to your enrolled courses.", path: "/forum/courses" },
-        { title: "❓ Help & Queries", desc: "Ask questions and get help from the community.", path: "/forum/help" },
+        //{ title: "❓ Help & Queries", desc: "Ask questions and get help from the community.", path: "/forum/help" },
     ];
 
     if (role !== "student") {

@@ -1,55 +1,49 @@
 const express = require("express");
 const router = express.Router();
 const Like = require("../models/Like");
-
-// Like a discussion or reply
-const User = require("../models/User"); // Ensure this file exists
-const Discussion = require("../models/Discussion"); // Ensure this file exists
-
-
+const Discussion = require("../models/Discussion");
 
 // Like a discussion or reply
 // Like a discussion
 router.post("/", async (req, res) => {
     try {
-        const { targetId, user } = req.body;  // Make sure frontend sends correct fields
+        const { user, targetId, targetType } = req.body;
 
-        // Find the discussion
-        const discussion = await Discussion.findById(targetId);
-        if (!discussion) {
-            return res.status(404).json({ message: "Discussion not found" });
+        const existingLike = await Like.findOne({ user, targetId, targetType });
+
+        if (existingLike) {
+            await Like.findByIdAndDelete(existingLike._id);
+
+            // Remove user from discussion.likes
+            if (targetType === "Discussion") {
+                await Discussion.findByIdAndUpdate(
+                    targetId,
+                    { $pull: { likes: user } },
+                    { new: true }
+                );
+            }
+
+            return res.status(200).json({ message: "Disliked", liked: false, userId: user });
+        } else {
+            const newLike = new Like({ user, targetId, targetType });
+            await newLike.save();
+
+            // Add user to discussion.likes
+            if (targetType === "Discussion") {
+                await Discussion.findByIdAndUpdate(
+                    targetId,
+                    { $addToSet: { likes: user } },
+                    { new: true }
+                );
+            }
+
+            return res.status(201).json({ message: "Liked", liked: true, userId: user });
         }
-
-        // Prevent duplicate likes
-        if (discussion.likes.includes(user)) {
-            return res.status(400).json({ message: "Already liked", likesCount: discussion.likes.length });
-        }
-
-        // Add like
-        discussion.likes.push(user);
-        await discussion.save();
-
-        res.json({ message: "Liked successfully", likesCount: discussion.likes.length });
-
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Server Error" });
+        console.error("Error toggling like:", error);
+        res.status(500).json({ error: "Internal server error" });
     }
 });
-
-// Get like count
-router.get("/:targetId/likes", async (req, res) => {
-    try {
-        const discussion = await Discussion.findById(req.params.targetId);
-        if (!discussion) {
-            return res.status(404).json({ message: "Discussion not found" });
-        }
-        res.json({ likesCount: discussion.likes.length });
-    } catch (error) {
-        res.status(500).json({ message: "Error fetching likes", error });
-    }
-});
-
 
   
 

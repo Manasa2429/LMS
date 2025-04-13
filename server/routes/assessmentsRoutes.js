@@ -3,6 +3,7 @@ const Assessment = require("../models/Assessment");
 const User = require("../models/User");
 const Course = require("../models/Course");
 const Enrollment = require("../models/Enrollment");
+const Submission = require("../models/Submission");
 const mongoose = require("mongoose"); 
 const router = express.Router();
 
@@ -196,6 +197,46 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// Get completed assessments by userId
+router.get("/completed/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const submissions = await Submission.find({ userId }).populate("assessmentId");
+    res.json(submissions);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch completed assessments" });
+  }
+});
+
+// Get progress report (latest attempt per assessment)
+router.get("/progress/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const submissions = await Submission.find({ userId }).sort({ createdAt: -1 });
+    const latestSubmissions = {};
+
+    submissions.forEach((sub) => {
+      const key = sub.assessmentId.toString();
+      if (!latestSubmissions[key]) {
+        latestSubmissions[key] = sub;
+      }
+    });
+
+    const progressData = await Promise.all(
+      Object.values(latestSubmissions).map(async (s) => {
+        const assessment = await Assessment.findById(s.assessmentId);
+        return {
+          assessmentTitle: assessment.title,
+          score: s.score,
+        };
+      })
+    );
+
+    res.json(progressData);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch progress report" });
+  }
+});
 
 
 module.exports = router;

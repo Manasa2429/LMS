@@ -117,23 +117,26 @@ const GeneralDiscussions = () => {
                 targetType: "Discussion" 
             });
     
+            const { liked, userId: returnedUserId } = res.data;
+    
             setDiscussions((prevDiscussions) =>
-                prevDiscussions.map((discussion) =>
-                    discussion._id === discussionId 
-                        ? { ...discussion, likes: [...discussion.likes, userId] } // Add the user to the likes array
-                        : discussion
-                )
+                prevDiscussions.map((discussion) => {
+                    if (discussion._id === discussionId) {
+                        let updatedLikes = liked
+                            ? [...(discussion.likes || []), returnedUserId]
+                            : (discussion.likes || []).filter((id) => id !== returnedUserId);
+    
+                        return { ...discussion, likes: updatedLikes };
+                    }
+                    return discussion;
+                })
             );
-    
         } catch (error) {
-            console.error("Error liking discussion:", error.response?.data || error);
-    
-            // Handle "Already liked" case without modifying the state
-            if (error.response?.data?.message === "Already liked") {
-                alert("User already liked this discussion.");
-            }
+            console.error("Error toggling like:", error.response?.data || error);
         }
     };
+    
+    
     
     
     

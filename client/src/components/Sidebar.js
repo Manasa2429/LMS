@@ -23,15 +23,11 @@ const Sidebar = ({ role, onLogout }) => {
           <li className="nav-item">
             <button className={`nav-link ${isActive("/assessments")}`} onClick={() => navigate("/assessments")}>📝 Assessments</button>
           </li>
-          <li className="nav-item">
-            <button className={`nav-link ${isActive("/messages")}`} onClick={() => navigate("/messages")}>💬 Messages</button>
-          </li>
+          
           <li className="nav-item">
             <button className={`nav-link ${isActive("/forum")}`} onClick={() => navigate("/forum")}>💻 Discussion Forum</button>
           </li>
-          <li className="nav-item">
-            <button className={`nav-link ${isActive("/calendar")}`} onClick={() => navigate("/calendar")}>📅 Calendar</button>
-          </li>
+          
 
           {/* Admin-only options */}
           {role?.toLowerCase() === "admin" && (
@@ -48,12 +44,7 @@ const Sidebar = ({ role, onLogout }) => {
           <li className="nav-item">
             <button className={`nav-link ${isActive("/profile")}`} onClick={() => navigate("/profile")}>👤 Profile</button>
           </li>
-          <li className="nav-item">
-            <button className={`nav-link ${isActive("/settings")}`} onClick={() => navigate("/settings")}>⚙️ Settings</button>
-          </li>
-          <li className="nav-item">
-            <button className={`nav-link ${isActive("/support")}`} onClick={() => navigate("/support")}>❓ Help & Support</button>
-          </li>
+          
 
           {/* Logout Button */}
           <li className="nav-item">

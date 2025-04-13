@@ -8,8 +8,8 @@ const Profile = () => {
   const profileData = [
     { title: "👤 Personal Info", desc: "View and edit your personal details.", path: "/profile/personal-info" },
     { title: "📚 Enrolled Courses", desc: "Check the list of your active courses.", path: "/enrolled-courses/:userId" },
-    { title: "📊 Progress Report", desc: "Monitor your learning progress and achievements.", path: "/profile/progress" },
-    { title: "🔒 Change Password", desc: "Update your account security settings.", path: "/profile/change-password" },
+    { title: "📊 Progress Report", desc: "Monitor your learning progress and achievements.", path: "/assessments/analytics" },
+   // { title: "🔒 Change Password", desc: "Update your account security settings.", path: "/profile/change-password" },
   ];
 
   return (
