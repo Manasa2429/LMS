@@ -26,7 +26,7 @@ import Announcements from "./pages/Announcements";
 import ForumPage from "./pages/ForumPage";
 import CompletedAssessments from "./pages/CompletedAssessments";
 import ProgressReport from "./pages/ProgressReport";
-
+import AdminDashboard from "./pages/AdminDashboard";
 
 
 
@@ -75,6 +75,7 @@ function App() {
             {isLoggedIn ? (
               <>
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
                 <Route path="/courses" element={<Courses />} />
                 <Route path="/assessments" element={<Assessments />} />
                 <Route path="/assessments/ongoing" element={<OngoingAssessments />} />

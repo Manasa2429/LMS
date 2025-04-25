@@ -13,6 +13,9 @@ const replyRoutes = require("./routes/replyRoutes");
 const likeRoutes = require("./routes/likeRoutes");
 const announcementsRoutes=require("./routes/announcementsRoutes");
 const forumRoutes=require("./routes/forumRoutes");
+const adminDashboardRoutes = require("./routes/adminDashboard");
+
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -33,6 +36,7 @@ app.use("/api/replies", replyRoutes);
 app.use("/api/likes", likeRoutes);
 app.use("/api/announcements",announcementsRoutes);
 app.use("/api/forums",forumRoutes);
+app.use("/api/admin", adminDashboardRoutes);
 
 // Connect to MongoDB
 mongoose.connect(process.env.mongoURL, { useUnifiedTopology: true, useNewUrlParser: true });
